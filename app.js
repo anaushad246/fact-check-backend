@@ -11,6 +11,7 @@ import { fileURLToPath } from 'url';
 
 // Import routes
 import factCheckRoutes from './src/routes/factCheck.routes.js';
+import newsRoutes from './src/routes/news.route.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -41,6 +42,9 @@ res.send("All are ok")
 
 // Use fact-check routes
 app.use("/api/fact-check", factCheckRoutes);
+
+// Use news routes
+app.use("/api/news", newsRoutes);
 
 // Test endpoint for Fact Check API
 app.get("/test-fact-check", async (req, res) => {
