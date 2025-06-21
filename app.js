@@ -1,0 +1,130 @@
+import express from 'express'
+const app = express();
+
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import { searchFactChecks } from './src/controllers/user.controller.js';
+import { upload, handleImageUpload } from './src/controllers/image.controller.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Import routes
+import factCheckRoutes from './src/routes/factCheck.routes.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Create uploads directory if it doesn't exist
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+}
+
+app.use(cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials:true
+}))
+
+app.use(express.json({limit:"16kb"}));
+app.use(express.urlencoded({extended:true,limit:"16kb"}));
+app.use(express.static("public"));
+app.use(cookieParser())
+
+// routes import
+//  import userRouter from './routes/user.routes.js';
+
+// routes declaration
+app.get("/",(req,res)=>{
+res.send("All are ok")
+})
+
+// Use fact-check routes
+app.use("/api/fact-check", factCheckRoutes);
+
+// Test endpoint for Fact Check API
+app.get("/test-fact-check", async (req, res) => {
+    try {
+        console.log("Testing Fact Check API...");
+        const result = await searchFactChecks("covid");
+        res.json(result);
+    } catch (error) {
+        console.error("Test endpoint error:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Main fact-check endpoint for text
+app.post("/api/fact-check", async (req, res) => {
+    const { content } = req.body;
+    console.log("Received content:", content);
+    
+    if (!content) return res.status(400).json({ error: "Content is required." });
+
+    try {
+        const result = await searchFactChecks(content);
+        res.json(result);
+    } catch (error) {
+        console.error("Fact check error:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Image upload and fact-check endpoint
+app.post("/api/fact-check-image", upload.single('image'), handleImageUpload);
+
+// import { google } from 'googleapis';
+// import { GoogleAuth } from 'google-auth-library';
+// import path from 'path';
+// import { fileURLToPath } from 'url';
+// import { log } from 'console';
+
+
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+
+
+
+
+
+// const keyFilePath = path.join(__dirname, 'config', 'google-service-key.json');
+
+// const auth = new GoogleAuth({
+//   keyFile: keyFilePath,
+//   scopes: ['https://www.googleapis.com/auth/cloud-platform'],
+// });
+
+// // Route: POST /api/fact-check
+// app.post('/api/fact-check', async (req, res) => {
+//   const { query } = req.body;
+//    console.log(query)
+//   if (!query) {
+//     return res.status(400).json({ error: 'Query is required in the request body.' });
+//   }
+
+//   try {
+//     const client = await auth.getClient();
+//     // console.log(client)
+
+//     const factCheckTools = google.factchecktools({
+//       version: 'v1alpha1',
+//       auth: client,
+//     });
+
+//     const response = await factCheckTools.claims.search({
+//       query: query,
+//     //   languageCode: 'en-US',
+//     //   pageSize: 5,
+//     });
+
+//     res.json(response.data.claims || []);
+//   } catch (error) {
+//     console.error('Fact Check Error:', error.message);
+//     res.status(500).json({ error: 'Failed to fetch fact check results.' });
+//   }
+// });
+
+
+
+
+export {app}
