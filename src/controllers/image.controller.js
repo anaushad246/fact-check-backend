@@ -41,10 +41,24 @@ export const upload = multer({
   }
 });
 
+// -- NEW: Configure credentials for Google Vision --
+let visionClientOptions = {};
+if (process.env.GOOGLE_SERVICE_ACCOUNT_KEY) {
+  try {
+    const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
+    visionClientOptions.credentials = credentials;
+  } catch (e) {
+    console.error("Failed to parse GOOGLE_SERVICE_ACCOUNT_KEY. Is it a valid JSON string?", e);
+  }
+} else if (process.env.NODE_ENV !== 'production') {
+  // Fallback to key file only for local development
+  const keyFilePath = process.env.GOOGLE_SERVICE_ACCOUNT_KEY_PATH || 'google-key.json';
+  console.log(`Using Google Vision key file for local dev: ${keyFilePath}`);
+  visionClientOptions.keyFilename = keyFilePath;
+}
+
 // Initialize Google Vision client
-const visionClient = new vision.ImageAnnotatorClient({
-  keyFilename: process.env.GOOGLE_SERVICE_ACCOUNT_KEY || 'google-key.json' // or use default credentials
-});
+const visionClient = new vision.ImageAnnotatorClient(visionClientOptions);
 
 // Analyze image with Vision API
 async function analyzeImage(imagePath) {
