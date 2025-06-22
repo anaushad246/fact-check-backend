@@ -39,33 +39,33 @@ router.route('/articles').get(async (req, res) => {
   }
 });
 
-// New route for fetching news from NewsAPI
-router.route('/news').get(async (req, res) => {
-  try {
-    const { category, q: keyword } = req.query;
-    const apiKey = process.env.NEWS_API_KEY;
+// // New route for fetching news from NewsAPI
+// router.route('/news').get(async (req, res) => {
+//   try {
+//     const { category, q: keyword } = req.query;
+//     const apiKey = process.env.NEWS_API_KEY;
 
-    if (!apiKey) {
-      return res.status(500).json({ error: 'News API key is not configured.' });
-    }
+//     if (!apiKey) {
+//       return res.status(500).json({ error: 'News API key is not configured.' });
+//     }
 
-    let url;
-    if (category) {
-      url = `https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${apiKey}`;
-    } else if (keyword) {
-      url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(keyword)}&language=en&sortBy=publishedAt&pageSize=20&apiKey=${apiKey}`;
-    } else {
-      // Default case
-      url = `https://newsapi.org/v2/top-headlines?country=us&category=general&apiKey=${apiKey}`;
-    }
+//     let url;
+//     if (category) {
+//       url = `https://newsapi.org/v2/top-headlines?country=us&category=${category}&apiKey=${apiKey}`;
+//     } else if (keyword) {
+//       url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(keyword)}&language=en&sortBy=publishedAt&pageSize=20&apiKey=${apiKey}`;
+//     } else {
+//       // Default case
+//       url = `https://newsapi.org/v2/top-headlines?country=us&category=general&apiKey=${apiKey}`;
+//     }
 
-    const response = await axios.get(url);
-    res.json(response.data);
+//     const response = await axios.get(url);
+//     res.json(response.data);
 
-  } catch (error) {
-    console.error('Error fetching from NewsAPI:', error.response ? error.response.data : error.message);
-    res.status(500).json({ error: 'Failed to fetch news articles.' });
-  }
-});
+//   } catch (error) {
+//     console.error('Error fetching from NewsAPI:', error.response ? error.response.data : error.message);
+//     res.status(500).json({ error: 'Failed to fetch news articles.' });
+//   }
+// });
 
 export default router; 
