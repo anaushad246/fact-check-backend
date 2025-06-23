@@ -160,6 +160,9 @@ export async function handleImageUpload(req, res) {
     aiCategorization: aiSummary.consensus // ✅ Add this
   }
 };
+console.log("Sending response to client:", JSON.stringify(normalizedResponse, null, 2));
+res.json(normalizedResponse);
+    console.log('Image fact check completed successfully');
     // --- END NORMALIZED RESPONSE ---
 
     res.json(normalizedResponse);
