@@ -144,20 +144,23 @@ export async function handleImageUpload(req, res) {
 
     // --- NORMALIZED RESPONSE ---
     // This structure now matches the text-based fact-check response.
-    const normalizedResponse = {
-      summary: {
-        text: aiSummary.overview,
-        labels: result.imageAnalysis.labels.map(l => l.description),
-        claimReviewCount: claims.length,
-        consensus: aiSummary.consensus,
-        conclusion: aiSummary.conclusion,
-      },
-      data: {
-        factCheckResults: claims,
-        initialClaimAnalysis: `Image contained text: "${result.imageAnalysis.text || 'N/A'}" and labels like: ${result.imageAnalysis.labels.map(l => l.description).join(', ')}.`,
-        initialClaimCategorization: `Image labels: ${result.imageAnalysis.labels.map(l => l.description).join(', ')}`,
-      },
-    };
+   const normalizedResponse = {
+  summary: {
+    text: aiSummary.overview,
+    labels: result.imageAnalysis.labels.map(l => l.description),
+    claimReviewCount: claims.length,
+    consensus: aiSummary.consensus,
+    conclusion: aiSummary.conclusion,
+  },
+  data: {
+    factCheckResults: claims,
+    initialClaimAnalysis: `Image contained text: "${result.imageAnalysis.text || 'N/A'}" and labels like: ${result.imageAnalysis.labels.map(l => l.description).join(', ')}.`,
+    initialClaimCategorization: `Image labels: ${result.imageAnalysis.labels.map(l => l.description).join(', ')}`,
+    aiAnalysis: aiSummary.overview, // ✅ Add this
+    aiCategorization: aiSummary.consensus // ✅ Add this
+  }
+};
+    // --- END NORMALIZED RESPONSE ---
 
     res.json(normalizedResponse);
 
