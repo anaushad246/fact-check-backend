@@ -22,36 +22,18 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir);
 }
 
-// const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || [];
-const allowedOrigins = [
-  'https://fact-check-frontend-lovat.vercel.app',
-  'https://fact-check-frontend-git-main-naushad-ahmads-projects.vercel.app',
-  'https://fact-check-frontend-blwoyoyp9-naushad-ahmads-projects.vercel.app',
-  'http://localhost:5173'  // Optional: useful for local development
-];
+const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || [];
 
 app.use(cors({
   origin: function (origin, callback) {
-    console.log("CORS Origin:", origin); // Helpful for debugging
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error("Not allowed by CORS: " + origin));
+      callback(new Error("Not allowed by CORS"));
     }
   },
   credentials: true
 }));
-
-// app.use(cors({
-//   origin: function (origin, callback) {
-//     if (!origin || allowedOrigins.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error("Not allowed by CORS"));
-//     }
-//   },
-//   credentials: true
-// }));
 
 
 app.use(express.json({limit:"16kb"}));
