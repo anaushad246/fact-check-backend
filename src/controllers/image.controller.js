@@ -43,8 +43,9 @@ export const upload = multer({
 
 // Initialize Google Vision client
 const visionClient = new vision.ImageAnnotatorClient({
-  keyFilename: process.env.GOOGLE_SERVICE_ACCOUNT_KEY || 'google-key.json' // or use default credentials
+  credentials: JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY)
 });
+
 
 // Analyze image with Vision API
 async function analyzeImage(imagePath) {
